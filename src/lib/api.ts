@@ -148,11 +148,16 @@ function transformFrontendToBackend(project: Partial<ProjectFormData>): Record<s
 
     media: {
       // Only include media if it's a valid {url, key} object (not a blob:/data: string)
+      // Do NOT send empty arrays — that would wipe media already saved via proxy-upload
       ...(project.coverImage && typeof project.coverImage === 'object' && { coverImage: project.coverImage }),
-      ...(project.galleryImages?.length && { galleryImages: project.galleryImages.filter((img: any) => typeof img === 'object' && img?.url) }),
-      ...(project.videos?.length && { videos: project.videos.filter((vid: any) => typeof vid === 'object' && vid?.url) }),
+      ...(project.layoutImage && typeof project.layoutImage === 'object' && { layoutImage: project.layoutImage }),
+      ...(project.galleryImages?.length && {
+        galleryImages: project.galleryImages.filter((img: any) => typeof img === 'object' && img?.url)
+      }),
+      ...(project.videos?.length && {
+        videos: project.videos.filter((vid: any) => typeof vid === 'object' && vid?.url)
+      }),
       ...(project.brochureUrl && typeof project.brochureUrl === 'object' && { brochurePdf: project.brochureUrl }),
-      ...(project.layoutImage && typeof project.layoutImage === 'object' && { layoutImage: project.layoutImage })
     },
 
     cta: {
