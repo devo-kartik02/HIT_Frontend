@@ -1,4 +1,4 @@
-// //layout-editor page for project
+﻿// //layout-editor page for project
 // 'use client';
 
 // import { useParams } from 'next/navigation';
@@ -9,25 +9,25 @@
 // function getMobileTools(tab: string) {
 //     switch(tab) {
 //       case "Boundary": return [
-//         { icon: "🧱", label: "Draw", color: "green", onClick: () => { setDrawingType("project-boundary"); setDrawingMode(google.maps.drawing.OverlayType.POLYGON); }},
+//         { icon: "🧱", label: "Draw", color: "green", onClick: () => { setDrawingType("project-boundary"); setDrawingMode('polygon'); }},
 //         { icon: "💾", label: "Save", color: "gray", onClick: () => mapRef.current?.saveBoundary(projectId) },
 //         { icon: "🧩", label: "Edit", color: "gray", onClick: () => mapRef.current?.editBoundary() },
 //         { icon: "↩", label: "Undo", color: "gray", onClick: () => mapRef.current?.undo() },
 //       ];
 //       case "Roads": return [
-//         { icon: "🛣", label: "Draw", color: "green", onClick: () => { setDrawingType("road"); setDrawingMode(google.maps.drawing.OverlayType.POLYGON); }},
-//         { icon: "⬛", label: "Rect", color: "gray", onClick: () => { setDrawingType("road"); setDrawingMode(google.maps.drawing.OverlayType.RECTANGLE); }},
+//         { icon: "🛣", label: "Draw", color: "green", onClick: () => { setDrawingType("road"); setDrawingMode('polygon'); }},
+//         { icon: "⬛", label: "Rect", color: "gray", onClick: () => { setDrawingType("road"); setDrawingMode('rectangle'); }},
 //         { icon: "↩", label: "Undo", color: "gray", onClick: () => mapRef.current?.undo() },
 //         { icon: "✖", label: "Exit", color: "gray", onClick: () => setDrawingMode(null) },
 //       ];
 //       case "Plots": return [
-//         { icon: "📐", label: "Draw", color: "green", onClick: () => { setDrawingType("subplot"); setDrawingMode(google.maps.drawing.OverlayType.POLYGON); }},
-//         { icon: "⬛", label: "Rect", color: "gray", onClick: () => { setDrawingType("subplot"); setDrawingMode(google.maps.drawing.OverlayType.RECTANGLE); }},
+//         { icon: "📐", label: "Draw", color: "green", onClick: () => { setDrawingType("subplot"); setDrawingMode('polygon'); }},
+//         { icon: "⬛", label: "Rect", color: "gray", onClick: () => { setDrawingType("subplot"); setDrawingMode('rectangle'); }},
 //         { icon: "💾", label: "Save", color: "gray", onClick: () => mapRef.current?.openLastUnsavedPlot() },
 //         { icon: "🗑", label: "Delete", color: "gray", onClick: () => mapRef.current?.deleteSelectedPlot() },
 //       ];
 //       case "AI": return [
-//         { icon: "🟣", label: "Boundary", color: "green", onClick: () => { setDrawingType("ai-boundary"); setDrawingMode(google.maps.drawing.OverlayType.POLYGON); }},
+//         { icon: "🟣", label: "Boundary", color: "green", onClick: () => { setDrawingType("ai-boundary"); setDrawingMode('polygon'); }},
 //         { icon: "⚡", label: "Generate", color: "gray", onClick: () => mapRef.current?.generateAILayout() },
 //         { icon: "✏️", label: "Edit", color: "gray", onClick: () => mapRef.current?.toggleAiEditMode(true) },
 //         { icon: "💾", label: "Save", color: "gray", onClick: () => { mapRef.current?.saveAiLayout(); setDrawingMode(null); }},
@@ -301,7 +301,7 @@
 //           label="Draw Boundary"
 //           onClick={() => {
 //             setDrawingType("project-boundary");
-//             setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
+//             setDrawingMode('polygon');
 //           }}
 //           color="indigo"
 //         />
@@ -336,7 +336,7 @@
 //           label="Draw Road"
 //           onClick={() => {
 //             setDrawingType("road");
-//             setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
+//             setDrawingMode('polygon');
 //           }}
 //           color="gray"
 //         />
@@ -346,7 +346,7 @@
 //           label="Rectangle Road"
 //           onClick={() => {
 //             setDrawingType("road");
-//             setDrawingMode(google.maps.drawing.OverlayType.RECTANGLE);
+//             setDrawingMode('rectangle');
 //           }}
 //           color="gray"
 //         />
@@ -368,7 +368,7 @@
 //           label="Draw Plot"
 //           onClick={() => {
 //             setDrawingType("subplot");
-//             setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
+//             setDrawingMode('polygon');
 //           }}
 //           color="purple"
 //         />
@@ -377,7 +377,7 @@
 //           label="Rectangle Plot"
 //           onClick={() => {
 //             setDrawingType("subplot");
-//             setDrawingMode(google.maps.drawing.OverlayType.RECTANGLE);
+//             setDrawingMode('rectangle');
 //           }}
 //           color="purple"
 //         />
@@ -422,7 +422,7 @@
 //           onClick={() => {
 //             mapRef.current?.toggleAiEditMode(false);
 //             setDrawingType("ai-boundary");
-//             setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
+//             setDrawingMode('polygon');
 
 //           }}
 //           color="purple"
@@ -879,7 +879,7 @@ export default function LayoutEditorPage() {
   const [sheetExpanded,     setSheetExpanded]     = useState(false);
 
   const [drawingMode, setDrawingMode] =
-    useState<google.maps.drawing.OverlayType | null>(null);
+    useState<'polygon' | 'rectangle' | 'circle' | 'polyline' | 'marker' | null>(null);
   const [drawingType, setDrawingType] =
     useState<"project-boundary" | "subplot" | "road" | "ai-boundary" | undefined>("project-boundary");
 
@@ -942,7 +942,7 @@ export default function LayoutEditorPage() {
       case "Boundary":
         return (
           <div className="grid grid-cols-3 gap-2">
-            <MobileToolButton label="Draw Boundary" color="indigo"  onClick={() => { setDrawingType("project-boundary"); setDrawingMode(google.maps.drawing.OverlayType.POLYGON); }} />
+            <MobileToolButton label="Draw Boundary" color="indigo"  onClick={() => { setDrawingType("project-boundary"); setDrawingMode('polygon'); }} />
             <MobileToolButton label="Save Boundary" color="purple"  onClick={() => mapRef.current?.saveBoundary(projectId)} />
             <MobileToolButton label="Edit Boundary" color="blue"   onClick={() => mapRef.current?.editBoundary()} />
           </div>
@@ -951,16 +951,16 @@ export default function LayoutEditorPage() {
       case "Roads":
         return (
           <div className="grid grid-cols-3 gap-2">
-            <MobileToolButton  label="Draw Road"      color="gray" onClick={() => { setDrawingType("road"); setDrawingMode(google.maps.drawing.OverlayType.POLYGON); }} />
-            <MobileToolButton  label="Rectangle Road" color="gray" onClick={() => { setDrawingType("road"); setDrawingMode(google.maps.drawing.OverlayType.RECTANGLE); }} />
+            <MobileToolButton  label="Draw Road"      color="gray" onClick={() => { setDrawingType("road"); setDrawingMode('polygon'); }} />
+            <MobileToolButton  label="Rectangle Road" color="gray" onClick={() => { setDrawingType("road"); setDrawingMode('rectangle'); }} />
           </div>
         );
 
       case "Plots":
         return (
           <div className="grid grid-cols-3 gap-2">
-            <MobileToolButton label="Draw Plot"      color="purple" onClick={() => { setDrawingType("subplot"); setDrawingMode(google.maps.drawing.OverlayType.POLYGON); }} />
-            <MobileToolButton  label="Rect Plot"      color="purple" onClick={() => { setDrawingType("subplot"); setDrawingMode(google.maps.drawing.OverlayType.RECTANGLE); }} />
+            <MobileToolButton label="Draw Plot"      color="purple" onClick={() => { setDrawingType("subplot"); setDrawingMode('polygon'); }} />
+            <MobileToolButton  label="Rect Plot"      color="purple" onClick={() => { setDrawingType("subplot"); setDrawingMode('rectangle'); }} />
             <MobileToolButton label="Edit Plot"      color="blue"   disabled={!panelPlotId} onClick={() => panelPlotId && mapRef.current?.editPlot(panelPlotId)} />
             <MobileToolButton label="Save Plot"      color="purple"  onClick={() => mapRef.current?.openLastUnsavedPlot()} />
             <MobileToolButton label="Delete Plot"    color="red"    onClick={() => mapRef.current?.deleteSelectedPlot()} />
@@ -970,7 +970,7 @@ export default function LayoutEditorPage() {
       case "AI":
         return (
           <div className="grid grid-cols-3 gap-2">
-            <MobileToolButton  label="Draw AI Boundary"   color="purple" onClick={() => { mapRef.current?.toggleAiEditMode(false); setDrawingType("ai-boundary"); setDrawingMode(google.maps.drawing.OverlayType.POLYGON); }} />
+            <MobileToolButton  label="Draw AI Boundary"   color="purple" onClick={() => { mapRef.current?.toggleAiEditMode(false); setDrawingType("ai-boundary"); setDrawingMode('polygon'); }} />
             <MobileToolButton label="Generate AI Layout" color="blue"  onClick={() => mapRef.current?.generateAILayout()} />
             <MobileToolButton label="Edit AI Layout"     color="purple"   onClick={() => mapRef.current?.toggleAiEditMode(true)} />
             <MobileToolButton label="Save AI Layout"     color="blue"  onClick={() => { mapRef.current?.saveAiLayout(); setDrawingMode(null); setDrawingType(undefined); }} />
@@ -1162,7 +1162,7 @@ export default function LayoutEditorPage() {
           <div>
             <h3 className="text-xs font-semibold text-gray-400 mb-2">Project Boundary</h3>
             <div className="grid grid-cols-3 gap-2">
-              <ToolButton icon="🧱" label="Draw Boundary" color="indigo" onClick={() => { setDrawingType("project-boundary"); setDrawingMode(google.maps.drawing.OverlayType.POLYGON); }} />
+              <ToolButton icon="🧱" label="Draw Boundary" color="indigo" onClick={() => { setDrawingType("project-boundary"); setDrawingMode('polygon'); }} />
               <ToolButton icon="💾" label="Save Boundary" color="green"  onClick={() => mapRef.current?.saveBoundary(projectId)} />
               <ToolButton icon="🧩" label="Edit Boundary" color="blue"   onClick={() => mapRef.current?.editBoundary()} />
             </div>
@@ -1171,16 +1171,16 @@ export default function LayoutEditorPage() {
           <div>
             <h3 className="text-xs font-semibold text-gray-400 mb-2">Roads</h3>
             <div className="grid grid-cols-3 gap-2">
-              <ToolButton icon="🛣"  label="Draw Road"      color="gray" onClick={() => { setDrawingType("road"); setDrawingMode(google.maps.drawing.OverlayType.POLYGON); }} />
-              <ToolButton icon="⬛" label="Rectangle Road" color="gray" onClick={() => { setDrawingType("road"); setDrawingMode(google.maps.drawing.OverlayType.RECTANGLE); }} />
+              <ToolButton icon="🛣"  label="Draw Road"      color="gray" onClick={() => { setDrawingType("road"); setDrawingMode('polygon'); }} />
+              <ToolButton icon="⬛" label="Rectangle Road" color="gray" onClick={() => { setDrawingType("road"); setDrawingMode('rectangle'); }} />
             </div>
           </div>
 
           <div>
             <h3 className="text-xs font-semibold text-gray-400 mb-2">Plots</h3>
             <div className="grid grid-cols-3 gap-2">
-              <ToolButton icon="📐" label="Draw Plot"      color="purple" onClick={() => { setDrawingType("subplot"); setDrawingMode(google.maps.drawing.OverlayType.POLYGON); }} />
-              <ToolButton icon="⬛" label="Rectangle Plot" color="purple" onClick={() => { setDrawingType("subplot"); setDrawingMode(google.maps.drawing.OverlayType.RECTANGLE); }} />
+              <ToolButton icon="📐" label="Draw Plot"      color="purple" onClick={() => { setDrawingType("subplot"); setDrawingMode('polygon'); }} />
+              <ToolButton icon="⬛" label="Rectangle Plot" color="purple" onClick={() => { setDrawingType("subplot"); setDrawingMode('rectangle'); }} />
               <ToolButton icon="✏"  label="Edit Plot"      color="blue"   disabled={!panelPlotId} onClick={() => panelPlotId && mapRef.current?.editPlot(panelPlotId)} />
               <ToolButton icon="💾" label="Save Plot"      color="green"  onClick={() => mapRef.current?.openLastUnsavedPlot()} />
               <ToolButton icon="🗑" label="Delete Plot"    color="red"    onClick={() => mapRef.current?.deleteSelectedPlot()} />
@@ -1190,7 +1190,7 @@ export default function LayoutEditorPage() {
           <div>
             <h3 className="text-xs font-semibold text-gray-400 mb-2">AI Generated Plots</h3>
             <div className="grid grid-cols-3 gap-2">
-              <ToolButton icon="🟣"  label="Draw AI Boundary"   color="purple" onClick={() => { mapRef.current?.toggleAiEditMode(false); setDrawingType("ai-boundary"); setDrawingMode(google.maps.drawing.OverlayType.POLYGON); }} />
+              <ToolButton icon="🟣"  label="Draw AI Boundary"   color="purple" onClick={() => { mapRef.current?.toggleAiEditMode(false); setDrawingType("ai-boundary"); setDrawingMode('polygon'); }} />
               <ToolButton icon="⚡"  label="Generate AI Layout" color="green"  onClick={() => mapRef.current?.generateAILayout()} />
               <ToolButton icon="✏️" label="Edit AI Layout"     color="blue"   onClick={() => mapRef.current?.toggleAiEditMode(true)} />
               <ToolButton icon="💾"  label="Save AI Layout"     color="green"  onClick={() => { mapRef.current?.saveAiLayout(); setDrawingMode(null); setDrawingType(undefined); }} />

@@ -14,7 +14,7 @@ import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRe
 import { mediaApi, projectsApi, saveProjectLandmarks } from '@/lib/api';
 import { Landmark, Project } from '@/types/project';
 import SearchFiltersPanel from "./SearchFiltersPanel";
-import { DrawingManager } from '@react-google-maps/api';
+// import { DrawingManager } from '@react-google-maps/api';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import AILayoutConfigModal from '../ui/AILayoutConfigModal';
@@ -34,7 +34,7 @@ type Props = {
   lat: number;
   lng: number;
   focusOnly?:boolean;
-  drawingMode?: google.maps.drawing.OverlayType | null;
+  drawingMode?: 'polygon' | 'rectangle' | 'circle' | 'polyline' | 'marker' | null;
   drawingType?: MapEntityType;
   logo?: string;
   sqft?: string;
@@ -82,6 +82,11 @@ const containerStyle = {
   width: '100%',
   height: '100%',
 };
+
+// Stable reference — must live outside the component so the Loader singleton
+// is never called with a new array reference (prevents the "Loader called again
+// with different options" error and avoids unnecessary reloads).
+const MAP_LIBRARIES: ('places' | 'geometry' | 'marker')[] = ['places', 'geometry', 'marker'];
 const getPlotColor = (status?: PlotStatus) => {
   switch (status) {
     case "sold":
@@ -206,6 +211,8 @@ const ProjectMap = forwardRef(
   ) => {
   // 🔹 Always run hooks first
   const mapRef = useRef<google.maps.Map | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const drawingManagerRef = useRef<any>(null);
 const getNeighborhoodIcon = (type: string): google.maps.Icon => {
   const iconPaths: Record<string, string> = {
     hospital: "M10 2h4v6h6v4h-6v6h-4v-6H4V8h6z",
@@ -375,7 +382,7 @@ const landmarkLabelsRef = useRef<google.maps.OverlayView[]>([]);
   const is3D = useRef(false);
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-    libraries: ['places', 'drawing', 'geometry', 'marker'],
+    libraries: MAP_LIBRARIES,
   });
 
 useEffect(() => {
@@ -429,6 +436,71 @@ useEffect(() => {
     setEditingPlotId(null);
   }
 }, [drawingType]);
+
+  // Imperative DrawingManager — replaces the deprecated @react-google-maps/api wrapper.
+  // Loads the 'drawing' library on-demand so it is never requested at page load
+  // (which caused the v3.65 deprecation error).
+  useEffect(() => {
+    if (!isLoaded || !mapRef.current) return;
+
+    const setupDrawingManager = async () => {
+      // Destroy any existing instance before creating a new one
+      if (drawingManagerRef.current) {
+        drawingManagerRef.current.setMap(null);
+        google.maps.event.clearInstanceListeners(drawingManagerRef.current);
+        drawingManagerRef.current = null;
+      }
+
+      // If no drawing mode is requested, nothing to do
+      if (!drawingMode) return;
+
+      // Dynamically import the drawing library (supported in v3.65+)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { DrawingManager } = await (google.maps as any).importLibrary('drawing') as { DrawingManager: any };
+
+      const dm = new DrawingManager({
+        drawingMode: drawingMode,
+        drawingControl: false,
+        map: mapRef.current,
+        polygonOptions: {
+          fillColor: '#2563eb',
+          fillOpacity: 0.2,
+          strokeWeight: 2,
+          editable: true,
+          clickable: true,
+        },
+        rectangleOptions: {
+          fillColor: '#2563eb',
+          fillOpacity: 0.2,
+          editable: true,
+        },
+        circleOptions: {
+          fillColor: '#2563eb',
+          fillOpacity: 0.2,
+          editable: true,
+        },
+        polylineOptions: {
+          strokeWeight: 3,
+          editable: true,
+        },
+      });
+
+      dm.addListener('overlaycomplete', onOverlayComplete);
+      drawingManagerRef.current = dm;
+    };
+
+    setupDrawingManager();
+
+    return () => {
+      if (drawingManagerRef.current) {
+        drawingManagerRef.current.setMap(null);
+        google.maps.event.clearInstanceListeners(drawingManagerRef.current);
+        drawingManagerRef.current = null;
+      }
+    };
+    // onOverlayComplete is defined inline — intentionally not in deps to avoid recreation loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, drawingMode]);
   const filterProjectsInView = useCallback(() => {
      if (isFocusMode && focusedProject) {
       setVisibleProjects([focusedProject]);
@@ -1697,7 +1769,7 @@ const updatePlotField = (id: string, field: string, value: any) => {
   );
 };
 
-const onOverlayComplete = (e: google.maps.drawing.OverlayCompleteEvent) => {
+const onOverlayComplete = (e: { type: string; overlay: google.maps.MVCObject & { getPath?: () => google.maps.MVCArray<google.maps.LatLng>; getBounds?: () => google.maps.LatLngBounds | null; setMap: (map: google.maps.Map | null) => void } }) => {
   const id = crypto.randomUUID();
 
   if (e.type === "polygon") {
@@ -2147,7 +2219,7 @@ const showProjectUI =
                 <DirectionsRenderer directions={directions} options={{ suppressMarkers: true }} />
               )}
 
-            <DrawingManager
+            {/* <DrawingManager
                 
               drawingMode={aiEditMode ? null : drawingMode || null}
               onOverlayComplete={onOverlayComplete}
@@ -2176,7 +2248,7 @@ const showProjectUI =
                   },
                 }}
                
-            />
+            /> */}
               {selectedPlot && selectedPlot.type === "road" && !selectedPlot.saved && (
                 <OverlayView
                   position={getPolygonCenter(selectedPlot.path)}

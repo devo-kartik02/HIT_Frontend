@@ -59,7 +59,7 @@ export default function BuilderDashboardPage() {
             <Zap className="w-3.5 h-3.5 text-[#B45309]" />
             <h2 className="text-[10px] font-bold text-[#57534E] uppercase tracking-[0.2em]">Priority Workflows</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <Link
               href="/dashboard/marketplace"
               className="group bg-white p-6 border border-[#E7E5E4] rounded-3xl shadow-sm hover:shadow-xl hover:shadow-[#B45309]/5 hover:border-[#B45309]/30 transition-all active:scale-[0.98] flex items-center gap-5 relative overflow-hidden"
@@ -75,7 +75,7 @@ export default function BuilderDashboardPage() {
                 <p className="text-[10px] text-[#A8A29E] mt-0.5 font-bold uppercase tracking-widest">Marketplace</p>
               </div>
             </Link>
-            <Link
+            {/* <Link
               href="/dashboard/employees"
               className="group bg-white p-6 border border-[#E7E5E4] rounded-3xl shadow-sm hover:shadow-xl hover:shadow-[#B45309]/5 hover:border-[#B45309]/30 transition-all active:scale-[0.98] flex items-center gap-5 relative overflow-hidden"
             >
@@ -89,7 +89,7 @@ export default function BuilderDashboardPage() {
                 <h3 className="text-sm font-bold text-[#2A2A2A] font-serif group-hover:text-[#B45309] transition-colors leading-tight">Field Team</h3>
                 <p className="text-[10px] text-[#A8A29E] mt-0.5 font-bold uppercase tracking-widest">Team Management</p>
               </div>
-            </Link>
+            </Link> */}
 
             <Link
               href="/dashboard/projects/new"
